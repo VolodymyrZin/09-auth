@@ -98,9 +98,10 @@
   font-size: 14px;
   color: #495057;
   line-height: 1.5;
-  flex: 1; /* Вирівнює кнопки по низу картки */
+  flex: 1;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

@@ -2,7 +2,6 @@ import { api } from './api';
 import { User } from '@/types/user';
 import {
   Note,
-  NoteTag,
   FetchNotesParams,
   FetchNotesResponse,
   CreateNotePayload,
