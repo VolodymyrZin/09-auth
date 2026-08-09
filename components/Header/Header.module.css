@@ -5,6 +5,7 @@
   padding: 1rem 2rem;
   background-color: #333;
   color: white;
+  min-height: 64px;
 }
 
 .header a {
@@ -12,6 +13,8 @@
   color: white;
   font-size: 1.5rem;
   font-weight: bold;
+  display: flex;
+  align-items: center;
 }
 
 .header a:hover {
@@ -23,15 +26,46 @@
   margin: 0;
   padding: 0;
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  gap: 1.5rem;
+}
+.navigation li {
+  display: flex;
+  align-items: center;
 }
 
-.navigation li a {
+.navigation li a,
+.navigation li button,
+.navigation li span {
   text-decoration: none;
   color: white;
   font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
 }
 
 .navigation li a:hover {
   color: #ddd;
+}
+
+.userEmail {
+  font-size: 0.9rem;
+  color: #ccc;
+  margin-right: 0.5rem;
+}
+
+.logoutButton {
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.logoutButton:hover {
+  background-color: #fff;
+  color: #333;
 }

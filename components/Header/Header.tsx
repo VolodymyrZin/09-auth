@@ -1,3 +1,4 @@
+import AuthNavigation from '../AuthNavigation/AuthNavigation';
 import css from './Header.module.css';
 import Link from 'next/link';
 
@@ -13,8 +14,9 @@ export default function Header() {
             <Link href="/">Home</Link>
           </li>
           <li>
-            <Link href="/notes/filter/all">Notes</Link>
+            <Link href="/notes">Notes</Link>
           </li>
+          <AuthNavigation />
         </ul>
       </nav>
     </header>

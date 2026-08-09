@@ -1,12 +1,11 @@
-// lib/store/noteStore.ts
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { NoteTag } from '@/types/note';
 
 export type DraftNote = {
   title: string;
   content: string;
-  tag: string;
+  tag: NoteTag;
 };
 
 const initialDraft: DraftNote = {

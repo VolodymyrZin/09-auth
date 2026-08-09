@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
+
 import './globals.css';
 
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import TanStackProvider from '@/components/TanStackProvider/TanStackProvider';
+import AuthProvider from '@/components/AuthProvider/AuthProvider';
 
 export const metadata: Metadata = {
   title: {
@@ -12,6 +14,7 @@ export const metadata: Metadata = {
     template: '%s | NoteHub',
   },
   description: 'NoteHub - excellent web application for managing notes',
+
   openGraph: {
     title: 'NoteHub',
     description: 'NoteHub - excellent web application for managing notes',
@@ -27,6 +30,7 @@ export const metadata: Metadata = {
     ],
     type: 'website',
   },
+
   twitter: {
     card: 'summary_large_image',
     title: 'NoteHub',
@@ -51,15 +55,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={roboto.variable}>
+      <body className={roboto.className}>
         <TanStackProvider>
-          <Header />
-
-          {children}
-
-          {modal}
-
-          <Footer />
+          <AuthProvider>
+            <Header />
+            {children}
+            <Footer />
+            {modal}
+          </AuthProvider>
         </TanStackProvider>
       </body>
     </html>
