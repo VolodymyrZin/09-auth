@@ -3,20 +3,22 @@
 import { useEffect, useState } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
-import { fetchNotes } from '@/lib/api';
+import { fetchNotes } from '@/lib/api/clientApi';
 import Link from 'next/link';
 
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
 import NoteList from '@/components/NoteList/NoteList';
 
+import { NoteTag } from '@/types/note';
+
 import css from './NotesPage.module.css';
 
-interface Props {
-  tag?: string;
+interface NotesClientProps {
+  tag?: NoteTag;
 }
 
-export default function NotesClient({ tag }: Props) {
+export default function NotesClient({ tag }: NotesClientProps) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
