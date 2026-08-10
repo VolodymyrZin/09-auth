@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkSession } from './lib/api/serverApi';
 
 const privateRoutes = ['/profile', '/notes'];
 const publicRoutes = ['/sign-in', '/sign-up'];
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const accessToken = request.cookies.get('accessToken')?.value;
@@ -15,14 +16,44 @@ export function proxy(request: NextRequest) {
 
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
 
-  const isAuthenticated = Boolean(accessToken || refreshToken);
+  if (accessToken) {
+    if (isPublicRoute) {
+      return NextResponse.redirect(new URL('/profile', request.url));
+    }
 
-  if (isPrivateRoute && !isAuthenticated) {
-    return NextResponse.redirect(new URL('/sign-in', request.url));
+    return NextResponse.next();
   }
 
-  if (isPublicRoute && isAuthenticated) {
-    return NextResponse.redirect(new URL('/profile', request.url));
+  if (refreshToken) {
+    try {
+      const response = await checkSession();
+
+      const nextResponse = isPublicRoute
+        ? NextResponse.redirect(new URL('/profile', request.url))
+        : NextResponse.next();
+
+      const setCookies = response.headers['set-cookie'];
+
+      if (setCookies) {
+        const cookies = Array.isArray(setCookies) ? setCookies : [setCookies];
+
+        cookies.forEach(cookie => {
+          nextResponse.headers.append('set-cookie', cookie);
+        });
+      }
+
+      return nextResponse;
+    } catch {
+      if (isPrivateRoute) {
+        return NextResponse.redirect(new URL('/sign-in', request.url));
+      }
+
+      return NextResponse.next();
+    }
+  }
+
+  if (isPrivateRoute) {
+    return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
   return NextResponse.next();

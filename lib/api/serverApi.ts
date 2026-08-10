@@ -1,9 +1,8 @@
 import { cookies } from 'next/headers';
-import axios from 'axios';
+import { api } from './api';
 import type { User } from '@/types/user';
+import type { AxiosResponse } from 'axios';
 import type { Note, FetchNotesParams, FetchNotesResponse } from '@/types/note';
-
-const baseURL = process.env.NEXT_PUBLIC_API_URL + '/api';
 
 const getCookieHeader = async () => {
   const cookieStore = await cookies();
@@ -21,7 +20,7 @@ export const fetchNotes = async (
 ): Promise<FetchNotesResponse> => {
   const config = await getCookieHeader();
 
-  const { data } = await axios.get<FetchNotesResponse>(`${baseURL}/notes`, {
+  const { data } = await api.get<FetchNotesResponse>(`/notes`, {
     ...config,
     params,
   });
@@ -32,7 +31,7 @@ export const fetchNotes = async (
 export const fetchNoteById = async (id: string): Promise<Note> => {
   const config = await getCookieHeader();
 
-  const { data } = await axios.get<Note>(`${baseURL}/notes/${id}`, config);
+  const { data } = await api.get<Note>(`/notes/${id}`, config);
 
   return data;
 };
@@ -40,18 +39,15 @@ export const fetchNoteById = async (id: string): Promise<Note> => {
 export const getMe = async (): Promise<User> => {
   const config = await getCookieHeader();
 
-  const { data } = await axios.get<User>(`${baseURL}/users/me`, config);
+  const { data } = await api.get<User>(`/users/me`, config);
 
   return data;
 };
 
-export const checkSession = async (): Promise<{ message: string }> => {
+export const checkSession = async (): Promise<
+  AxiosResponse<{ message: string }>
+> => {
   const config = await getCookieHeader();
 
-  const { data } = await axios.get<{ message: string }>(
-    `${baseURL}/auth/session`,
-    config
-  );
-
-  return data;
+  return api.get<{ message: string }>('/auth/session', config);
 };
