@@ -17,7 +17,7 @@ export default function Home() {
           NoteHub offers a streamlined experience for anyone who values clarity
           and productivity.
         </p>
-        <Link href="/notes" className={css.button}>
+        <Link href="/notes/filter/all" className={css.button}>
           View Notes →
         </Link>
       </div>

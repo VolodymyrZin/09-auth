@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -27,14 +27,23 @@ export default function NotesClient() {
   const queryClient = useQueryClient();
 
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [page, setPage] = useState(1);
   const [tag, setTag] = useState<NoteTag | ''>('');
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['notes', { search, page, tag }],
+    queryKey: ['notes', { search: debouncedSearch, page, tag }],
     queryFn: () =>
       fetchNotes({
-        search,
+        search: debouncedSearch,
         page,
         ...(tag ? { tag } : {}),
       }),
@@ -42,7 +51,6 @@ export default function NotesClient() {
 
   const deleteMutation = useMutation({
     mutationFn: deleteNote,
-
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['notes'],
@@ -65,7 +73,7 @@ export default function NotesClient() {
   }
 
   if (isError) {
-    return <p className={css.error}>Failed to load notes.</p>;
+    return <p>Failed to load notes.</p>;
   }
 
   const notes = data?.notes ?? [];
