@@ -28,9 +28,7 @@ export async function proxy(request: NextRequest) {
     try {
       const response = await checkSession();
 
-      const nextResponse = isPublicRoute
-        ? NextResponse.redirect(new URL('/profile', request.url))
-        : NextResponse.next();
+      const nextResponse = NextResponse.redirect(new URL(request.url));
 
       const setCookies = response.headers['set-cookie'];
 
