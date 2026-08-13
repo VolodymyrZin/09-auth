@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { parseSetCookie } from 'cookie';
 import { checkSession } from './lib/api/serverApi';
 
@@ -8,8 +9,10 @@ const publicRoutes = ['/sign-in', '/sign-up'];
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const accessToken = request.cookies.get('accessToken')?.value;
-  const refreshToken = request.cookies.get('refreshToken')?.value;
+  const cookieStore = await cookies();
+
+  const accessToken = cookieStore.get('accessToken')?.value;
+  const refreshToken = cookieStore.get('refreshToken')?.value;
 
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
 
@@ -19,43 +22,35 @@ export async function proxy(request: NextRequest) {
 
   if (!accessToken) {
     if (refreshToken) {
-      try {
-        const data = await checkSession();
-        const setCookie = data.headers['set-cookie'];
+      const data = await checkSession();
+      const setCookie = data.headers['set-cookie'];
 
-        if (setCookie) {
-          const cookieArray = Array.isArray(setCookie)
-            ? setCookie
-            : [setCookie];
+      if (setCookie) {
+        const cookieArray = Array.isArray(setCookie) ? setCookie : [setCookie];
 
-          const nextResponse = isPublicRoute
-            ? NextResponse.redirect(new URL('/', request.url))
-            : NextResponse.next();
+        for (const cookieStr of cookieArray) {
+          const parsed = parseSetCookie(cookieStr);
 
-          for (const cookieStr of cookieArray) {
-            const parsed = parseSetCookie(cookieStr);
-
-            if (parsed.value) {
-              nextResponse.cookies.set(parsed.name, parsed.value, parsed);
-            }
+          if (parsed.value) {
+            cookieStore.set(parsed.name, parsed.value, parsed);
           }
-
-          return nextResponse;
         }
 
         if (isPublicRoute) {
-          return NextResponse.redirect(new URL('/', request.url));
+          return NextResponse.redirect(new URL('/', request.url), {
+            headers: {
+              Cookie: cookieStore.toString(),
+            },
+          });
         }
 
         if (isPrivateRoute) {
-          return NextResponse.next();
+          return NextResponse.next({
+            headers: {
+              Cookie: cookieStore.toString(),
+            },
+          });
         }
-      } catch {
-        if (isPrivateRoute) {
-          return NextResponse.redirect(new URL('/sign-in', request.url));
-        }
-
-        return NextResponse.next();
       }
     }
 
@@ -69,7 +64,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isPublicRoute) {
-    return NextResponse.redirect(new URL('/profile', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   if (isPrivateRoute) {
