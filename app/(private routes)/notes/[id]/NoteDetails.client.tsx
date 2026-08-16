@@ -46,7 +46,7 @@ export default function NoteDetailsClient() {
           {note.createdAt ? new Date(note.createdAt).toLocaleDateString() : ''}
         </p>
 
-        <Link href="/notes" className={css.backButton}>
+        <Link href="/notes/filter/all" className={css.backButton}>
           Back to Notes
         </Link>
       </div>

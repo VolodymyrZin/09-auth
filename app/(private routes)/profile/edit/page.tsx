@@ -35,54 +35,47 @@ export default function EditProfilePage() {
   }
   return (
     <main className={css.mainContent}>
-      {' '}
       <div className={css.profileCard}>
-        {' '}
-        <h1 className={css.formTitle}>Edit Profile</h1>{' '}
+        <h1 className={css.formTitle}>Edit Profile</h1>
         <Image
           src={user.avatar}
           alt="User Avatar"
           width={120}
           height={120}
           className={css.avatar}
-        />{' '}
+        />
         <form onSubmit={handleSubmit} className={css.profileInfo}>
-          {' '}
           <div className={css.usernameWrapper}>
-            {' '}
-            <label htmlFor="username">Username:</label>{' '}
+            <label htmlFor="username">Username:</label>
             <input
               id="username"
               type="text"
               value={username}
               onChange={event => setUsername(event.target.value)}
               className={css.input}
-            />{' '}
-          </div>{' '}
-          <p>Email: {user.email}</p>{' '}
-          {error && <p className={css.error}>{error}</p>}{' '}
+            />
+          </div>
+          <p>Email: {user.email}</p>
+          {error && <p className={css.error}>{error}</p>}
           <div className={css.actions}>
-            {' '}
             <button
               type="submit"
               className={css.saveButton}
               disabled={isLoading}
             >
-              {' '}
-              {isLoading ? 'Saving...' : 'Save'}{' '}
-            </button>{' '}
+              {isLoading ? 'Saving...' : 'Save'}
+            </button>
             <button
               type="button"
               onClick={handleCancel}
               className={css.cancelButton}
               disabled={isLoading}
             >
-              {' '}
-              Cancel{' '}
-            </button>{' '}
-          </div>{' '}
-        </form>{' '}
-      </div>{' '}
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </main>
   );
 }
